@@ -1,7 +1,6 @@
-const randomPuppy = require('random-puppy');
-const Discord = require('discord.js');
-
-module.exports = {
+import randomPuppy from 'random-puppy';
+import Discord from 'discord.js';
+export default {
     name: "meme",
     description: "meme command, sends a meme from certain place",
 

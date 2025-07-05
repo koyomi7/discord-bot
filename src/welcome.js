@@ -1,4 +1,4 @@
-module.exports = client => {
+export default (client) => {
     const channelID = "519089447380320259";
     client.on("guildMemberAdd", (member) => {
         console.log(member);

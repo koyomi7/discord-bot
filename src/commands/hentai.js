@@ -1,11 +1,11 @@
-const randomPuppy = require('random-puppy');
-const Discord = require('discord.js');
-
-module.exports = {
+import randomPuppy from 'random-puppy';
+import Discord from 'discord.js';
+export default {
     name:"hentai",
     description: "hentai command, sends nsfw content",
 
     async run(bot, message, args){
+	    console.log("RTEA");
         const subReddits = ["hentai", "rule34", "thighhighhentai"]
         const random = subReddits[Math.floor(Math.random()*subReddits.length)]
         const image =  await randomPuppy(random)
