@@ -1,4 +1,4 @@
-module.exports = {
+export default {
     name: 'reactionrole',
     description: "Sets up a reaction role message!",
     async execute(message, args, Discord, client) {

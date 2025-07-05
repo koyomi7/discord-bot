@@ -1,40 +1,50 @@
-require("dotenv").config();
-
-const { Client, GuildMember, MessageEmbed } = require('discord.js');
-const Discord = require('discord.js');
-const { readdirSync, read } = require('fs');
-const fs = require('fs');
-const { join } = require('path');
-const welcome = require("./welcome");
-const fetch = require('node-fetch');
-const mongoose = require('mongoose');
-const Levels = require('discord-xp');
-const randomPuppy = require('random-puppy');
-const akaneko = require('akaneko');
-const DisTube = require('distube');
-const db = require('quick.db');
-//const image = require('./image');
-
-const client = new Discord.Client({ partials: ["MESSAGE", "CHANNEL", "REACTION" ]});
-const distube = new DisTube(client, { searchSongs: true, emitNewSongOnly: true });
-
-mongoose.connect(process.env.MONGO_SRV,{
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-    useFindAndModify: false
-}).then(()=>{
-    console.log('Connected to the database');
-}).catch((err)=>{
-    console.log(err);
+import dotenv from "dotenv";
+dotenv.config();
+const token = process.env.BOT_TOKEN?.trim(); // Added trim() and optional chaining
+import { Client, GuildMember, EmbedBuilder, GatewayIntentBits, Partials } from 'discord.js';
+import Discord from 'discord.js';
+import { readdirSync, read } from 'fs';
+import fs from 'fs';
+import { join } from 'path';
+import welcome from './welcome.js';
+import DisTube from 'distube';
+import fetch from 'node-fetch';
+import Levels from 'discord-xp';
+import randomPuppy from 'random-puppy';
+import akaneko from 'akaneko';
+import db from 'quick.db';
+const client = new Client({
+	  intents: [
+		      GatewayIntentBits.Guilds,
+		      GatewayIntentBits.GuildMessages,
+		      GatewayIntentBits.MessageContent,
+		      GatewayIntentBits.GuildVoiceStates, // Required for DisTube
+		      GatewayIntentBits.GuildMembers, // Optional, if you need member events
+		      GatewayIntentBits.GuildMessageReactions // Optional, if you need reactions
+		    ],
+	  partials: [
+		      Partials.Message,
+		      Partials.Channel,
+		      Partials.Reaction
+		    ]
 });
+
+const distube = new DisTube(client, {  emitNewSongOnly: true });
 
 //direct to command folder
 client.commands = new Discord.Collection();
 const PREFIX = "!";
 const PREFIX1 = ".";
+import { fileURLToPath } from 'url';
+import { dirname } from 'path';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 const commandFiles = readdirSync(join(__dirname, "commands")).filter(file => file.endsWith(".js"));
+console.log(commandFiles);
 for (const file of commandFiles) {
-    const command = require(`./commands/${file}`);
+    const command = (await import(`./commands/${file}`)).default;
+    console.log(command);
     client.commands.set(command.name, command);
 }
 client.on("error", console.error);
@@ -152,6 +162,7 @@ distube
 
 //nsfw part
 client.on('message', async message => {
+	console.log("ERE");
     const embed = new Discord.MessageEmbed();
     var command = message.content.toLowerCase().slice(PREFIX.length).split(' ')[0];
     if (!message.content.startsWith(PREFIX) || message.author.bot) return;
@@ -897,7 +908,6 @@ async function gotMessage(msg) {
  }
 };
 
-Levels.setURL(process.env.MONGO_SRV)
 client.on("message", async message => {
     Levels.setLevel("296502875587215361", "850584649041575956", 777);
     Levels.setLevel("296502875587215361", "519089447380320256", 777);
